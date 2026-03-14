@@ -9,6 +9,7 @@ import { showOverlayJsonConfigDialog } from './dialogs.js';
 import { DEFAULT_ACTIVE_EFFECT_CONFIG } from '../scripts/models.js';
 import { updateWithEffectMapping } from '../scripts/hooks/effectMappingHooks.js';
 import { drawOverlays } from '../scripts/token/overlay.js';
+import { CORE_TEMPLATES } from '../scripts/mappingTemplates.js';
 
 // Persist group toggles across forms
 let TOGGLED_GROUPS;
@@ -176,6 +177,24 @@ export default class EffectMappingForm extends FormApplication {
         }),
       );
     html.find('.tokens').on('click', this._onTokensRemove.bind(this));
+    html[0].addEventListener('drop', this._onDrop.bind(this));
+  }
+
+  async _onDrop(event) {
+    const { type, id, source, subtype } = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+
+    let template;
+    if (type === 'TVA Template') {
+      if (source === 'user') template = TVA_CONFIG.templateMappings?.find((t) => t.id === id);
+      else template = CORE_TEMPLATES.find((t) => t.id === id);
+    } else if (type === 'CommunityGalleryEntry' && subtype === 'TVA Template') {
+      const response = await fetch(data.src);
+      const entry = await response.json();
+      template = entry.data;
+    }
+    if (!template) return;
+
+    this._insertMappings(event, template.mappings);
   }
 
   async _onTokensRemove(event) {
@@ -600,12 +619,7 @@ export default class EffectMappingForm extends FormApplication {
       icon: 'fa-solid fa-book',
       onclick: async (ev) => {
         const { TemplatesV2 } = await import('./templatesV2.js');
-        new TemplatesV2({
-          mappings: this.globalMappings ?? getFlagMappings(this.objectToFlag),
-          callback: (templateName, mappings) => {
-            this._insertMappings(ev, mappings);
-          },
-        }).render(true);
+        new TemplatesV2().render(true);
       },
     });
 

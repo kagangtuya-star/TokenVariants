@@ -7,8 +7,6 @@ const { HandlebarsApplicationMixin, ApplicationV2 } = foundry.applications.api;
 export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
   constructor(options = {}) {
     super(options);
-    this._mappings = options.mappings;
-    this.callback = options.callback;
     this._category = 'user';
   }
 
@@ -26,7 +24,6 @@ export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
     classes: ['template-gallery'],
     actions: {
       changeCategory: TemplatesV2._onChangeCategory,
-      selectTemplate: TemplatesV2._onSelectTemplate,
       copyTemplate: TemplatesV2._onCopyTemplate,
       deleteTemplate: TemplatesV2._onDeleteTemplate,
     },
@@ -94,6 +91,15 @@ export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
       case 'header':
         element.querySelector('input[type="search"]').addEventListener('input', this._onSearch.bind(this));
         break;
+      case 'list':
+        element.querySelectorAll('.template').forEach((el) => {
+          el.addEventListener('dragstart', (event) => {
+            const { id } = event.target.closest('.template').dataset;
+            const dragData = { type: 'TVA Template', id, source: this._category };
+            event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
+          });
+        });
+        break;
     }
   }
 
@@ -108,14 +114,6 @@ export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
   static _onChangeCategory(event, target) {
     this._category = target.dataset.category;
     this.render({ parts: ['header', 'list'] });
-  }
-
-  static _onSelectTemplate(event, target) {
-    if (!this.callback) return;
-
-    const { id } = target.dataset;
-    const { name, mappings } = this.templates.find((t) => t.id === id) ?? {};
-    if (mappings) this.callback(name, mappings);
   }
 
   static async _onCopyTemplate(event, target) {

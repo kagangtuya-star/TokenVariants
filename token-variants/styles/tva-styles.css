@@ -968,7 +968,7 @@ input.tvaInvalid {
   padding: 6px;
   background: linear-gradient(145deg, #2a2c2e, #222426);
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
-  cursor: pointer;
+  cursor: grab;
 }
 
 #tva-templates .list .template img {

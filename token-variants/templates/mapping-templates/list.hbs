@@ -1,7 +1,7 @@
 <section>    
     <div class="list">
     {{#each templates}}
-        <div class="template" data-action="selectTemplate" data-id="{{id}}" data-name="{{name}}" data-creator="{{createdBy}}"
+        <div class="template" data-action="selectTemplate" data-id="{{id}}" data-name="{{name}}" data-creator="{{createdBy}}" draggable="true"
             data-tooltip='<div class="tooltiptext">{{#if hint}}<div class="description">{{hint}}</div>{{/if}}{{#if img}}<img src="{{img}}" loading="lazy">{{/if}}</div>'>
             <img src="{{img}}">
             <div class="label">

@@ -2,7 +2,6 @@ import { TVA_CONFIG, updateSettings, _arrayAwareDiffObject } from './settings.js
 import { showArtSelect } from '../token-variants.mjs';
 import EffectMappingForm from '../applications/effectMappingForm.js';
 import CompendiumMapConfig from '../applications/compendiumMap.js';
-import { toggleTemplate } from './hooks/effectMappingHooks.js';
 
 const simplifyRegex = new RegExp(/[^A-Za-z0-9/\\]/g);
 
@@ -422,22 +421,6 @@ export function registerKeybinds() {
     ],
     onDown: () => {
       new CompendiumMapConfig().render(true);
-    },
-    restricted: true,
-    precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
-  });
-
-  game.keybindings.register('token-variants', 'toggleTemplate', {
-    name: 'Toggle Template Dialog',
-    hint: 'Brings up a dialog from which you can toggle templates on currently selected tokens.',
-    editable: [],
-    onDown: async () => {
-      const { TemplatesV2 } = await import('../applications/templatesV2.js');
-      new TemplatesV2({
-        callback: (templateName, mappings) => {
-          canvas.tokens.controlled.forEach((t) => toggleTemplate(t, templateName, mappings));
-        },
-      }).render(true);
     },
     restricted: true,
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,

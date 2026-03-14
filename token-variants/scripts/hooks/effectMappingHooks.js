@@ -680,21 +680,6 @@ export async function removeTemplate(token, templateName = null, mappings = null
   drawOverlays(token);
 }
 
-export function toggleTemplate(token, templateName = null, mappings = null) {
-  if (templateName) mappings = _getTemplateMappings(templateName);
-  if (!token || !mappings) return;
-
-  const actor = game.actors.get(token.actor.id);
-  if (!actor) return;
-
-  const actMappings = getFlagMappings(actor);
-  if (actMappings.some((m) => mappings.some((m2) => m2.id === m.id && m.tokens?.includes(token.id)))) {
-    removeTemplate(token, null, mappings);
-  } else {
-    applyTemplate(token, null, mappings);
-  }
-}
-
 function getHPChangeEffect(token, effects) {
   const internals = token.actor?.getFlag('token-variants', 'internalEffects') || {};
   const delta = foundry.utils.getProperty(token, 'delta.flags.token-variants.internalEffects');
