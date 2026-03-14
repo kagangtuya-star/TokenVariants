@@ -85,22 +85,22 @@ export class OverlayConfig extends FormApplication {
       const legend = $(this);
       legend.append(
         `&nbsp;<a class="cloneShape" data-index="${i}" title="Clone"><i class="fas fa-clone"></i></a>
-         &nbsp;<a class="deleteShape" data-index="${i}" title="Remove"><i class="fas fa-trash-alt"></i></a>`
+         &nbsp;<a class="deleteShape" data-index="${i}" title="Remove"><i class="fas fa-trash-alt"></i></a>`,
       );
       if (i != 0) {
         legend.append(
-          `&nbsp;<a class="moveShapeUp" data-index="${i}" title="Move Up"><i class="fas fa-arrow-up"></i></a>`
+          `&nbsp;<a class="moveShapeUp" data-index="${i}" title="Move Up"><i class="fas fa-arrow-up"></i></a>`,
         );
       }
       if (i != shapeLegends.length - 1) {
         legend.append(
-          `&nbsp;<a class="moveShapeDown" data-index="${i}" title="Move Down"><i class="fas fa-arrow-down"></i></a>`
+          `&nbsp;<a class="moveShapeDown" data-index="${i}" title="Move Down"><i class="fas fa-arrow-down"></i></a>`,
         );
       }
       legend.append(
         `<input class="shape-legend-input" type="text" name="shapes.${i}.label" value="${
           config.shapes?.[i]?.label ?? ''
-        }">`
+        }">`,
       );
     });
 
@@ -536,7 +536,7 @@ export class OverlayConfig extends FormApplication {
     });
 
     data.fonts = Object.keys(CONFIG.fontDefinitions).concat(
-      Object.keys(game.settings.get('core', foundry.applications.settings.menus.FontConfig.SETTING))
+      Object.keys(game.settings.get('core', foundry.applications.settings.menus.FontConfig.SETTING)),
     );
     data.fontWeights = [
       'normal',
@@ -555,7 +555,7 @@ export class OverlayConfig extends FormApplication {
     ];
 
     const allMappings = getAllEffectMappings(this.token, true).filter((m) => m.id !== this.config.id);
-    const [_, groupedMappings] = sortMappingsToGroups(allMappings);
+    const { groups: groupedMappings } = sortMappingsToGroups(allMappings);
 
     data.parents = groupedMappings;
     if (!data.parentID) data.parentID = 'TOKEN';

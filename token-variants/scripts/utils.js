@@ -2,7 +2,7 @@ import { TVA_CONFIG, updateSettings, _arrayAwareDiffObject } from './settings.js
 import { showArtSelect } from '../token-variants.mjs';
 import EffectMappingForm from '../applications/effectMappingForm.js';
 import CompendiumMapConfig from '../applications/compendiumMap.js';
-import { toggleTemplateDialog } from '../applications/dialogs.js';
+import { toggleTemplate } from './hooks/effectMappingHooks.js';
 
 const simplifyRegex = new RegExp(/[^A-Za-z0-9/\\]/g);
 
@@ -104,7 +104,7 @@ export async function updateTokenImage(
     animate = true,
     update = null,
     applyDefaultConfig = true,
-  } = {}
+  } = {},
 ) {
   if (!(token || actor)) {
     console.warn(game.i18n.localize('token-variants.notifications.warn.update-image-no-token-actor'));
@@ -166,7 +166,7 @@ export async function updateTokenImage(
 
   const tokenCustomConfig = foundry.utils.mergeObject(
     getTokenConfigForUpdate(imgSrc || token?.texture.src, imgName, token),
-    config ?? {}
+    config ?? {},
   );
   const usingCustomConfig = token?.getFlag('token-variants', 'usingCustomConfig');
   const defaultConfig = getDefaultConfig(token);
@@ -263,7 +263,7 @@ export async function updateActorImage(actor, imgSrc, directUpdate = true, pack 
       {
         img: imgSrc,
       },
-      pack ? { pack: pack } : null
+      pack ? { pack: pack } : null,
     );
   }
 }
@@ -431,7 +431,14 @@ export function registerKeybinds() {
     name: 'Toggle Template Dialog',
     hint: 'Brings up a dialog from which you can toggle templates on currently selected tokens.',
     editable: [],
-    onDown: toggleTemplateDialog,
+    onDown: async () => {
+      const { TemplatesV2 } = await import('../applications/templatesV2.js');
+      new TemplatesV2({
+        callback: (templateName, mappings) => {
+          canvas.tokens.controlled.forEach((t) => toggleTemplate(t, templateName, mappings));
+        },
+      }).render(true);
+    },
     restricted: true,
     precedence: CONST.KEYBINDING_PRECEDENCE.NORMAL,
   });
@@ -672,7 +679,7 @@ export function modMergeObject(
     inplace = true,
     enforceTypes = false,
   } = {},
-  _d = 0
+  _d = 0,
 ) {
   other = other || {};
   if (!(original instanceof Object) || !(other instanceof Object)) {
@@ -753,7 +760,7 @@ function _modMergeUpdate(original, k, v, { insertKeys, insertValues, enforceType
         inplace: true,
         enforceTypes: enforceTypes,
       },
-      _d
+      _d,
     );
   }
 
@@ -1021,7 +1028,7 @@ export function getAllActorTokens(actor, linked = false, document = false) {
         if (linked && token.actorLink) tokens.push(token);
         else if (!linked) tokens.push(token);
       }
-    })
+    }),
   );
   if (document) return tokens;
   else return tokens.map((token) => token.object).filter((token) => token);

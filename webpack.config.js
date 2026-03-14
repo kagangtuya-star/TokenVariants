@@ -7,7 +7,7 @@ module.exports = (env) => {
     output: {
       filename: 'token-variants.js',
       path: path.resolve(__dirname, 'token-variants/bundle'),
-      publicPath: 'modules/bundle/token-variants/',
+      publicPath: 'modules/token-variants/bundle/',
     },
     optimization: {
       minimizer: [

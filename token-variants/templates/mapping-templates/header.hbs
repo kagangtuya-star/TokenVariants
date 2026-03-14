@@ -1,0 +1,10 @@
+<div>
+    <div class="categories">
+        <button {{#if (eq category "user")}}class="active"{{/if}} type="button" data-category="user" data-action="changeCategory">User</button>
+        <button {{#if (eq category "core")}}class="active"{{/if}} type="button" data-category="core" data-action="changeCategory">Core</button>
+    </div>
+
+    <div class="search">
+        <input type="search" placeholder="Search templates..">
+    </div>
+</div>

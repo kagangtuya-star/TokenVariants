@@ -1,0 +1,18 @@
+<div>
+    <h3 style="text-align: center;">{{title2}}</h3>
+    {{#each groups}}
+    <fieldset>
+        <legend>{{@key}}</legend>
+        {{#each list}}
+        <div class="form-group">
+            <label>{{label}}</label>
+            <div class="form-fields">
+                <input type="checkbox" name="{{id}}">
+            </div>
+        </div>
+        {{/each}}
+    </fieldset>
+    {{/each}}
+
+    <button type="button" data-action="selectAll" style="margin-top: 15px; width: 100%; background: slategray;">Select All</button>
+</div>

@@ -695,10 +695,6 @@ export function toggleTemplate(token, templateName = null, mappings = null) {
   }
 }
 
-export function toggleTemplateOnSelected(templateName = null, mappings = null) {
-  canvas.tokens.controlled.forEach((t) => toggleTemplate(t, templateName, mappings));
-}
-
 function getHPChangeEffect(token, effects) {
   const internals = token.actor?.getFlag('token-variants', 'internalEffects') || {};
   const delta = foundry.utils.getProperty(token, 'delta.flags.token-variants.internalEffects');

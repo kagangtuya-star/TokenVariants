@@ -920,98 +920,88 @@ input.tvaInvalid {
 /* Templates                                */
 /* ---------------------------------------- */
 
-#token-variants-templates .template-list {
-  list-style-type: none;
-  padding: 0;
-  margin-top: 0;
-  overflow: auto;
-  min-height: 350px;
-  max-height: 700px;
+#tva-templates .categories {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 10px;
 }
 
-#token-variants-templates .template-list li {
-  border: 1px solid #ddd;
-  margin-top: -1px;
-  background-color: gray;
-  padding: 5px;
-  text-decoration: none;
-  font-size: 18px;
-  color: white;
-  display: block;
+#tva-templates .categories button {
+  flex: 0 100px;
+  border-radius: 20px;
 }
 
-#token-variants-templates .template-list li a {
-  display: inline-block;
-  max-width: 430px;
+#tva-templates .categories button.active {
+  background: var(--button-hover-background-color);
+  color: var(--button-hover-text-color);
+  border-color: var(--button-hover-border-color);
 }
 
-#token-variants-templates .template-list li .system {
-  color: gold;
-  font-size: small;
+#tva-templates .search {
+  display: flex;
+  gap: 7px;
 }
 
-#token-variants-templates .template-list li .module {
-  color: chartreuse;
-  font-size: small;
+#tva-templates .create {
+  flex: 0 170px;
+  height: var(--input-height);
 }
 
-#token-variants-templates .template-list li:hover:not(.header) {
-  background-color: brown;
+#tva-templates .list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 400px;
+  overflow-y: auto;
+  margin-top: 11px;
+  padding-top: 6px;
+  padding-right: 5px;
 }
 
-#token-variants-templates .template-list .createdBy {
-  color: gold;
-  font-size: 0.9em;
-}
-
-#token-variants-templates .delete,
-#token-variants-templates .copy {
-  position: absolute;
-  right: 20px;
-}
-
-#token-variants-templates .delete:hover,
-#token-variants-templates .copy:hover {
-  color: gold;
-}
-
-#token-variants-templates .tooltip {
-  position: relative;
-  display: inline-block;
-  border-bottom: 1px dotted black;
-}
-
-#token-variants-templates .tooltip .tooltiptext {
-  visibility: hidden;
-  max-width: 500px;
-  background-color: rgba(38, 38, 38, 0.85);
-  color: #fff;
-  text-align: center;
+#tva-templates .list .template {
+  display: flex;
+  min-height: 100px;
+  border: 1px solid #3a3c3e;  
   border-radius: 6px;
-  padding: 5px 0;
-
-  /* Position the tooltip */
-  position: fixed;
-  margin-left: 500px;
-  z-index: 1;
+  align-items: center;
+  padding: 6px;
+  background: linear-gradient(145deg, #2a2c2e, #222426);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
+  cursor: pointer;
 }
 
-#token-variants-templates .tooltip:hover .tooltiptext {
-  visibility: visible;
+#tva-templates .list .template img {
+  height: 88px;
+  width: 88px;
+  background: #1a1c1e;
+  pointer-events: none;
+  border-radius: 4px;
+  object-fit: cover;
+  align-self: center;
+  margin-right: 10px;
 }
 
-#token-variants-templates .tooltip .tooltiptext img {
-  width: 90%;
-  max-height: 500px;
-  margin-bottom: 5px;
+#tva-templates .list .template:hover {
+  border-color: #6a8ab8;
+  box-shadow: 0 2px 12px rgba(80, 120, 180, 0.2);
+  transform: translateY(-1px);
 }
 
-#token-variants-templates .tooltip .tooltiptext .description {
-  margin-left: 5%;
-  margin-right: 5%;
-  margin-bottom: 10px;
-  margin-top: 5px;
-  text-align: left;
+#tva-templates .list .template .label{
+  flex: 1;
+  display: grid;
+  color: #d4c5a0;
+}
+
+#tva-templates .list .template .label .author{
+  font-size: small;
+  color: #888;
+}
+
+#tva-templates .list .template .controls{
+  flex: 0 20px;
+  font-size: large;
 }
 
 /* ---------------------------------------- */

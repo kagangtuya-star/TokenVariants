@@ -10,13 +10,7 @@ import {
   isResponsibleGM,
 } from './scripts/utils.js';
 import { FONT_LOADING, broadcastDrawOverlays, drawOverlays } from './scripts/token/overlay.js';
-import {
-  getTokenEffects,
-  setOverlayVisibility,
-  toggleTemplate,
-  toggleTemplateOnSelected,
-  updateWithEffectMapping,
-} from './scripts/hooks/effectMappingHooks.js';
+import { getTokenEffects, setOverlayVisibility, updateWithEffectMapping } from './scripts/hooks/effectMappingHooks.js';
 import { cacheImages, doImageSearch, doRandomSearch, isCaching } from './scripts/search.js';
 import { REGISTERED_HOOKS, registerAllHooks, registerHook } from './scripts/hooks/hooks.js';
 import { REGISTERED_WRAPPERS, registerAllWrappers } from './scripts/wrappers/wrappers.js';
@@ -26,7 +20,6 @@ import {
   unassignUserSpecificImage,
   unassignUserSpecificImageFromSelected,
 } from './scripts/wrappers/userMappingWrappers.js';
-import { toggleTemplateDialog } from './applications/dialogs.js';
 
 // Tracks if module has been initialized
 let MODULE_INITIALIZED = false;
@@ -148,7 +141,7 @@ export async function showArtSelect(
     multipleSelection = false,
     searchOptions = {},
     allImages = null,
-  } = {}
+  } = {},
 ) {
   if (isCaching()) return;
 
@@ -209,9 +202,6 @@ registerHook('main', 'init', function () {
     unassignUserSpecificImage,
     unassignUserSpecificImageFromSelected,
     setOverlayVisibility,
-    toggleTemplateDialog,
-    toggleTemplate,
-    toggleTemplateOnSelected,
     drawOverlays,
     broadcastDrawOverlays,
     TVA_CONFIG,

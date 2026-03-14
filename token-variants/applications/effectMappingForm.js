@@ -5,11 +5,10 @@ import { TVA_CONFIG, getFlagMappings, migrateMappings, updateSettings } from '..
 import EditJsonConfig from './configJsonEdit.js';
 import EditScriptConfig from './configScriptEdit.js';
 import { OverlayConfig } from './overlayConfig.js';
-import { showMappingSelectDialog, showOverlayJsonConfigDialog } from './dialogs.js';
+import { showOverlayJsonConfigDialog } from './dialogs.js';
 import { DEFAULT_ACTIVE_EFFECT_CONFIG } from '../scripts/models.js';
 import { updateWithEffectMapping } from '../scripts/hooks/effectMappingHooks.js';
 import { drawOverlays } from '../scripts/token/overlay.js';
-import { Templates } from './templates.js';
 
 // Persist group toggles across forms
 let TOGGLED_GROUPS;
@@ -117,7 +116,7 @@ export default class EffectMappingForm extends FormApplication {
       return priorityDiff;
     });
 
-    const [sMappings, groupedMappings] = sortMappingsToGroups(mappings);
+    const { mappings: sMappings, groups: groupedMappings } = sortMappingsToGroups(mappings);
     data.groups = Object.keys(groupedMappings);
 
     this.object.mappings = sMappings;
@@ -577,11 +576,31 @@ export default class EffectMappingForm extends FormApplication {
     });
 
     buttons.unshift({
+      label: 'Create Template',
+      icon: 'fa-solid fa-book',
+      class: 'token-variants-create-template',
+      onclick: async (ev) => {
+        const mappings = this.globalMappings ?? getFlagMappings(this.objectToFlag);
+        if (!mappings?.length) return;
+
+        const { CreateTemplate, MappingSelect } = await import('./templatesV2.js');
+        new MappingSelect({
+          mappings,
+          title1: 'Create Template',
+          callback: (selectedMappings) => {
+            if (selectedMappings?.length) new CreateTemplate(selectedMappings).render(true);
+          },
+        }).render(true);
+      },
+    });
+
+    buttons.unshift({
       label: 'Templates',
       class: 'token-variants-templates',
       icon: 'fa-solid fa-book',
       onclick: async (ev) => {
-        new Templates({
+        const { TemplatesV2 } = await import('./templatesV2.js');
+        new TemplatesV2({
           mappings: this.globalMappings ?? getFlagMappings(this.objectToFlag),
           callback: (templateName, mappings) => {
             this._insertMappings(ev, mappings);
@@ -614,8 +633,12 @@ export default class EffectMappingForm extends FormApplication {
   async _exportConfigs(event) {
     let filename = '';
 
+    const { MappingSelect } = await import('./templatesV2.js');
     let mappings = await new Promise((resolve) => {
-      showMappingSelectDialog(this.globalMappings ?? getFlagMappings(this.objectToFlag), { callback: resolve });
+      new MappingSelect({
+        mappings: this.globalMappings ?? getFlagMappings(this.objectToFlag),
+        callback: resolve,
+      }).render(true);
     });
 
     if (mappings && !foundry.utils.isEmpty(mappings)) {
@@ -674,15 +697,17 @@ export default class EffectMappingForm extends FormApplication {
     return await dialog;
   }
 
-  _copyGlobalConfig(event) {
-    showMappingSelectDialog(TVA_CONFIG.globalMappings, {
+  async _copyGlobalConfig(event) {
+    const { MappingSelect } = await import('./templatesV2.js');
+    new MappingSelect({
+      mappings: TVA_CONFIG.globalMappings,
       title1: 'Global Mappings',
-      title2: 'Select Mappings to Copy:',
-      buttonTitle: 'Copy',
+      title2: 'Select Mappings to Copy',
+      submitTitle: 'Copy',
       callback: (mappings) => {
         if (mappings) this._insertMappings(event, mappings);
       },
-    });
+    }).render(true);
   }
 
   async _insertMappings(event, mappings) {
@@ -893,5 +918,5 @@ export function sortMappingsToGroups(mappings) {
     if (!mapping.disabled) groupedMappings[mapping.group].active = true;
     groupedMappings[mapping.group].list.push(mapping);
   });
-  return [mappings, groupedMappings];
+  return { mappings, groups: groupedMappings };
 }
