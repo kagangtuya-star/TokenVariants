@@ -969,6 +969,7 @@ input.tvaInvalid {
   background: linear-gradient(145deg, #2a2c2e, #222426);
   transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
   cursor: grab;
+  position: relative;
 }
 
 #tva-templates .list .template img {
@@ -985,7 +986,6 @@ input.tvaInvalid {
 #tva-templates .list .template:hover {
   border-color: #6a8ab8;
   box-shadow: 0 2px 12px rgba(80, 120, 180, 0.2);
-  transform: translateY(-1px);
 }
 
 #tva-templates .list .template .label{
@@ -999,9 +999,32 @@ input.tvaInvalid {
   color: #888;
 }
 
-#tva-templates .list .template .controls{
-  flex: 0 20px;
-  font-size: large;
+#tva-templates .list .meta {
+  position: absolute;
+  left: 106px;
+  bottom: 6px;
+  font-size: small;
+  opacity: 0.7;
+}
+
+#tva-templates .list .meta span {
+  border: 1px solid white;
+  border-radius: 5px;
+  padding: 1px;
+  padding-left: 3px;
+  padding-right: 3px;
+}
+
+#tva-templates .list .meta .system {
+  background: #221e28;
+  border-color: #5a3a6a;
+  color: #a07ac8;
+}
+
+#tva-templates .list .meta .module {
+  background: #1e2428;
+  border-color: #3a4a3a;
+  color: #7a9c7a;
 }
 
 /* ---------------------------------------- */

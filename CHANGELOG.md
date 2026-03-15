@@ -1,3 +1,14 @@
+# 6.1.0
+
+**Templates**
+
+- Updated template browser and new template creation forms to AppV2
+- To apply templates you now need to drag them into the `Mappings` form
+- Deletion/Copying is now done through right-click context menu
+- Community Gallery
+  - The old community gallery/submission forms have been replaced by https://gallery.aedif.net/
+  - Gallery entries can be dragged into the `Template` and `Mappings` forms to import them
+
 # 6.0.6
 
 - Fixed string and boolean evaluators within mappings not behaving correctly (#217)

@@ -181,14 +181,15 @@ export default class EffectMappingForm extends FormApplication {
   }
 
   async _onDrop(event) {
-    const { type, id, source, subtype } = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+    const { type, id, source, subtype, src } =
+      foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
 
     let template;
     if (type === 'TVA Template') {
       if (source === 'user') template = TVA_CONFIG.templateMappings?.find((t) => t.id === id);
       else template = CORE_TEMPLATES.find((t) => t.id === id);
     } else if (type === 'CommunityGalleryEntry' && subtype === 'TVA Template') {
-      const response = await fetch(data.src);
+      const response = await fetch(src);
       const entry = await response.json();
       template = entry.data;
     }

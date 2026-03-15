@@ -24,8 +24,7 @@ export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
     classes: ['template-gallery'],
     actions: {
       changeCategory: TemplatesV2._onChangeCategory,
-      copyTemplate: TemplatesV2._onCopyTemplate,
-      deleteTemplate: TemplatesV2._onDeleteTemplate,
+      communityGallery: TemplatesV2._onCommunityGallery,
     },
   };
 
@@ -78,10 +77,6 @@ export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
     context.templates = this.templates.map((t) => {
       return { ...t, img: t.img || 'icons/containers/boxes/crate-reinforced-brown.webp' };
     });
-
-    context.category = this._category;
-    context.allowDelete = this._category === 'user';
-    context.allowCopy = this._category === 'core';
   }
 
   /** @override */
@@ -99,7 +94,35 @@ export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
             event.dataTransfer.setData('text/plain', JSON.stringify(dragData));
           });
         });
+        element.addEventListener('drop', this._onDrop.bind(this));
         break;
+    }
+  }
+
+  async _onDrop(event) {
+    const { type, subtype, src } = foundry.applications.ux.TextEditor.implementation.getDragEventData(event);
+
+    if (type === 'CommunityGalleryEntry' && subtype === 'TVA Template') {
+      const response = await fetch(src);
+      const entry = await response.json();
+      const template = {
+        id: foundry.utils.randomID(),
+        name: entry.title,
+        hint: entry.description,
+        mappings: entry.data.mappings,
+        img: 'https://assets.gallery.aedif.net' + entry.thumbnail,
+        createdBy: entry.author,
+        modules: entry.dependencies
+          .filter((id) => id !== 'token-variants')
+          .map((id) => {
+            return { id };
+          }),
+        system: entry.system.dependency ? entry.system.id : '',
+      };
+
+      TVA_CONFIG.templateMappings.push(template);
+      await updateSettings({ templateMappings: TVA_CONFIG.templateMappings });
+      this.render(true);
     }
   }
 
@@ -116,7 +139,7 @@ export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
     this.render({ parts: ['header', 'list'] });
   }
 
-  static async _onCopyTemplate(event, target) {
+  async _onCopyTemplate(target) {
     const { id } = target.closest('.template').dataset;
     const template = foundry.utils.deepClone(CORE_TEMPLATES.find((t) => t.id === id));
     if (!template) return;
@@ -128,7 +151,7 @@ export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
     ui.notifications.info(`Template {${template.name}} copied to User templates.`);
   }
 
-  static async _onDeleteTemplate(event, target) {
+  async _onDeleteTemplate(target) {
     const { id } = target.closest('.template').dataset;
 
     await updateSettings({
@@ -137,18 +160,74 @@ export class TemplatesV2 extends HandlebarsApplicationMixin(ApplicationV2) {
     this.render({ parts: ['list'] });
   }
 
-  // _getHeaderButtons() {
-  //   const buttons = super._getHeaderButtons();
-  //   buttons.unshift({
-  //     label: 'Upload Template',
-  //     class: '.token-variants-submit-template',
-  //     icon: 'fa-solid fa-cloud-arrow-up',
-  //     onclick: () => {
-  //       new TemplateSubmissionForm().render(true);
-  //     },
-  //   });
-  //   return buttons;
-  // }
+  static async _onCommunityGallery() {
+    const { default: Gallery } = await import(
+      /* webpackIgnore: true */ 'https://gallery.aedif.net/foundry-app/gallery.js'
+    );
+    Gallery.browse({ filter: '@"TVA Template"' });
+  }
+
+  /** @override */
+  async _onFirstRender(context, options) {
+    await super._onFirstRender(context, options);
+    this._createContextMenu(this._getTemplateContextOptions, '.template', {
+      hookName: 'getTVATemplateContextOptions',
+    });
+  }
+
+  _getTemplateContextOptions() {
+    return [
+      {
+        name: 'Upload To Gallery',
+        icon: '<i class="fa-solid fa-cloud-arrow-up"></i>',
+        condition: () => this._category === 'user',
+        callback: (element) => this._onUploadTemplate(element),
+      },
+      {
+        name: 'Copy To User',
+        icon: '<i class="fas fa-clone"></i>',
+        condition: () => this._category === 'core',
+        callback: (element) => this._onCopyTemplate(element),
+      },
+      {
+        name: 'Delete',
+        icon: '<i class="fa-solid fa-trash"></i>',
+        condition: () => this._category === 'user',
+        callback: (element) => this._onDeleteTemplate(element),
+      },
+    ];
+  }
+
+  async _onUploadTemplate(element) {
+    if (this._category !== 'user') return;
+
+    const id = element.dataset.id;
+    const template = foundry.utils.deepClone(this.templates.find((t) => t.id === id));
+    if (!template) return;
+
+    const title = template.name ?? '';
+    const description = template.hint ?? '';
+    const author = template.createdBy ?? '';
+    const dependencies = ['token-variants'];
+    if (Array.isArray(template.modules)) template.modules.forEach((m) => dependencies.push(m.id));
+    if (template.system?.trim()) dependencies.push(template.system.trim());
+
+    const { mappings } = template;
+
+    const { default: Gallery } = await import(
+      /* webpackIgnore: true */ 'https://gallery.aedif.net/foundry-app/gallery.js'
+    );
+
+    Gallery.submit({
+      title,
+      author,
+      description,
+      tags: ['tva'],
+      data: { mappings },
+      dependencies,
+      type: 'TVA Template',
+    });
+  }
 
   /**
    * @param {Event} event
@@ -290,8 +369,8 @@ export class CreateTemplate extends HandlebarsApplicationMixin(ApplicationV2) {
         mappings: foundry.utils.deepClone(this._mappings),
       });
       await updateSettings({ templateMappings: TVA_CONFIG.templateMappings });
-      const templateApp = foundry.applications.instances.get(TemplatesV2.DEFAULT_OPTIONS.id);
-      templateApp?.render(true);
+      foundry.applications.instances.get(TemplatesV2.DEFAULT_OPTIONS.id)?.render(true);
+
       this.close();
     } else {
       ui.notifications.warn('Template name is required.');
