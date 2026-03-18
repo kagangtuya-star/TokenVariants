@@ -1,3 +1,7 @@
+# 6.1.2
+
+- Fixed mapping import menu
+
 # 6.1.1
 
 - Fixed and error causing `Combat Encounters` tab to fail rendering when `Effects > Effect Icons > Disable SOME Effect Icons` is enabled when running on DnD5e
