@@ -1,3 +1,9 @@
+# 6.1.3
+
+- Added new setting: `Disable Scenescape category auto-switch`
+    - Prevents HUD image search from being automatically switched to PORTRAIT when on Mass Edit Scenescapes
+- Fixed 'ArtSelect is not defined' errors being thrown in certain situation
+
 # 6.1.2
 
 - Fixed mapping import menu
